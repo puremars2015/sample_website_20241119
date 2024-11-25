@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>猜數字遊戲</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        input, button {
+            padding: 10px;
+            margin: 10px;
+            width: calc(100% - 22px);
+            font-size: 1rem;
+        }
+        .message {
+            margin-top: 20px;
+            font-size: 1.2rem;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>猜數字遊戲</h1>
+        <button id="start-game">開始遊戲</button>
+        <div id="game-area" class="hidden">
+            <input type="number" id="guess-input" placeholder="輸入 1 到 100 的數字">
+            <button id="submit-guess">提交猜測</button>
+            <div class="message" id="message"></div>
+        </div>
+    </div>
+
+    <script>
+        // 定義遊戲變數
+        let targetNumber = null;  // 隨機目標數字
+        let attempts = 0;        // 猜測次數
+
+        // 開始遊戲功能
+        document.getElementById('start-game').addEventListener('click', () => {
+            targetNumber = Math.floor(Math.random() * 100) + 1;  // 生成 1 到 100 的隨機數字
+            attempts = 0;  // 重置猜測次數
+            document.getElementById('message').innerText = "遊戲已開始！請輸入 1 到 100 的數字。";
+            document.getElementById('game-area').classList.remove('hidden');
+        });
+
+        // 提交猜測功能
+        document.getElementById('submit-guess').addEventListener('click', () => {
+            const guessInput = document.getElementById('guess-input');
+            const guess = parseInt(guessInput.value, 10);  // 獲取玩家輸入數字
+            attempts++;  // 增加猜測次數
+
+            if (isNaN(guess) || guess < 1 || guess > 100) {
+                document.getElementById('message').innerText = "請輸入範圍內的有效數字！";
+                return;
+            }
+
+            if (guess < targetNumber) {
+                document.getElementById('message').innerText = "太小了！再試一次。";
+            } else if (guess > targetNumber) {
+                document.getElementById('message').innerText = "太大了！再試一次。";
+            } else {
+                document.getElementById('message').innerText = `恭喜你！猜對了！答案是 ${targetNumber}。你總共猜了 ${attempts} 次。`;
+                document.getElementById('game-area').classList.add('hidden');  // 結束遊戲
+            }
+
+            // 清空輸入框
+            guessInput.value = '';
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>猜數字遊戲</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        input, button {
+            padding: 10px;
+            margin: 10px;
+            width: calc(100% - 22px);
+            font-size: 1rem;
+        }
+        .message {
+            margin-top: 20px;
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>猜數字遊戲</h1>
+        <button id="start-game">開始遊戲</button>
+        <div id="game-area" style="display: none;">
+            <input type="number" id="guess-input" placeholder="輸入 1 到 100 的數字">
+            <button id="submit-guess">提交猜測</button>
+            <div class="message" id="message"></div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('start-game').addEventListener('click', async () => {
+            const response = await fetch('/start', { method: 'POST' });
+            const result = await response.json();
+            document.getElementById('message').innerText = result.message;
+            document.getElementById('game-area').style.display = 'block';
+        });
+
+        document.getElementById('submit-guess').addEventListener('click', async () => {
+            const guess = parseInt(document.getElementById('guess-input').value, 10);
+            if (isNaN(guess)) {
+                document.getElementById('message').innerText = "請輸入有效的數字！";
+                return;
+            }
+            const response = await fetch('/guess', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ guess })
+            });
+            const result = await response.json();
+            document.getElementById('message').innerText = result.message;
+
+            if (result.success) {
+                document.getElementById('game-area').style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

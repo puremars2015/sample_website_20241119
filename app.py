@@ -1,8 +1,10 @@
-from flask import Flask, jsonify, redirect, render_template, request, url_for
+import random
+from flask import Flask, jsonify, redirect, render_template, request, session, url_for
 from openai import OpenAI
 from config import openai_key
 
 app = Flask(__name__)
+app.secret_key = 'secret_key_for_sessions'
 
 ## 在此處替換為你的 OpenAI API Key
 client = OpenAI(api_key=openai_key)
@@ -12,6 +14,11 @@ client = OpenAI(api_key=openai_key)
 @app.route('/')
 def home():
     return render_template('home.html')
+
+# 首頁路由
+@app.route('/guess_number_web')
+def guess_number_web():
+    return app.send_static_file('guess_number_web.html')
 
 # 首頁路由
 @app.route('/contact')
@@ -27,6 +34,39 @@ def resume():
 @app.route('/rwd_sample')
 def rwd_sample():
     return render_template('rwd_sample.html')
+
+@app.route('/guess_number_server')
+def guess_number_server():
+    return render_template('guess_number_server.html')
+
+@app.route('/start', methods=['POST'])
+def start_game():
+    session['target'] = random.randint(1, 100)
+    session['attempts'] = 0
+    return jsonify(message="遊戲已開始！請輸入 1 到 100 的數字來猜測。")
+
+@app.route('/guess', methods=['POST'])
+def guess_number():
+    if 'target' not in session:
+        return jsonify(message="遊戲未開始，請先開始遊戲！", success=False)
+
+    guess = request.json.get('guess')
+    if not isinstance(guess, int) or guess < 1 or guess > 100:
+        return jsonify(message="請輸入範圍內的數字！", success=False)
+
+    print(session['target'])
+
+    session['attempts'] += 1
+    target = session['target']
+
+    if guess < target:
+        return jsonify(message="太小了！再試一次。", success=False)
+    elif guess > target:
+        return jsonify(message="太大了！再試一次。", success=False)
+    else:
+        attempts = session['attempts']
+        session.clear()
+        return jsonify(message=f"恭喜你！猜對了！答案是 {target}。你總共猜了 {attempts} 次。", success=True)
 
 # 路由：處理表單提交
 @app.route('/submit-message', methods=['POST'])
