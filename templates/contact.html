@@ -1,0 +1,147 @@
+<html>
+
+<head>
+    <title>小馬個人網頁</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        function submitForm(event) {
+            event.preventDefault(); // 防止表單的默認提交行為
+
+            // 獲取表單資料
+            const title = document.getElementById('title_text').value;
+            const content = document.getElementById('content_text').value;
+
+            // 驗證表單資料
+            if (!title || !content) {
+                alert('主旨與內容皆為必填');
+                return;
+            }
+
+            // 使用 Axios 發送 POST 請求
+            axios.post('/submit-contact-message', {
+                title: title,
+                content: content
+            })
+            .then(response => {
+                alert(response.data); // 顯示後端返回的訊息
+            })
+            .catch(error => {
+                if (error.response) {
+                    alert(`錯誤: ${error.response.data.message || '提交失敗'}`);
+                } else {
+                    alert('提交失敗，請稍後再試！');
+                }
+                console.error('提交錯誤:', error);
+            });
+        }
+    </script>
+      <style>
+        body {
+            font-family: 'Merriweather', serif;
+            background-color: #f7f2ee;
+            color: #3d3b3c;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .contact-container {
+            width: 100%;
+            max-width: 600px;
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .contact-container h2 {
+            font-size: 28px;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #2a2928;
+            border-bottom: 2px solid #d4a373;
+            display: inline-block;
+            padding-bottom: 5px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 16px;
+            margin-bottom: 8px;
+            color: #5a5a5a;
+            font-weight: bold;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #d4a373;
+            border-radius: 5px;
+            background: #fdfdfd;
+            color: #3d3b3c;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            border-color: #b38757;
+            outline: none;
+            box-shadow: 0 0 5px rgba(212, 163, 115, 0.4);
+        }
+
+        .form-group textarea {
+            resize: none;
+            height: 150px;
+        }
+
+        .submit-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            font-size: 18px;
+            font-weight: bold;
+            color: white;
+            background: #b38757;
+            border: none;
+            border-radius: 5px;
+            text-align: center;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .submit-btn:hover {
+            background: #9c7045;
+        }
+
+
+    </style>
+</head>
+
+<body>
+
+    <div class="contact-container">
+        <h2>聯絡我</h2>
+        <div class="form-group">
+            <label for="title_text">主旨:</label>
+            <input id="title_text" type="text" required />
+        </div>
+        <div class="form-group">
+            <label for="content_text">內容:</label>
+            <textarea id="content_text" required></textarea>
+        </div>
+        <div class="form-group">
+            <button class="submit-btn" type="submit" onclick="submitForm(event)">送出</button>
+        </div>
+    </div>
+</body>
+
+</html>

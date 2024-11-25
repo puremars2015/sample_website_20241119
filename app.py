@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, render_template, request
+from flask import Flask, jsonify, redirect, render_template, request, url_for
 from openai import OpenAI
 from config import openai_key
 
@@ -12,6 +12,57 @@ client = OpenAI(api_key=openai_key)
 @app.route('/')
 def home():
     return render_template('home.html')
+
+# 首頁路由
+@app.route('/contact')
+def contact():
+    return render_template('contact.html')
+
+# 首頁路由
+@app.route('/resume')
+def resume():
+    return render_template('resume.html')
+
+# 首頁路由
+@app.route('/rwd_sample')
+def rwd_sample():
+    return render_template('rwd_sample.html')
+
+# 路由：處理表單提交
+@app.route('/submit-message', methods=['POST'])
+def submit_message():
+    # 從表單中提取資料
+    title = request.form.get('title')
+    content = request.form.get('content')
+    
+    # 確保資料完整
+    if not title or not content:
+        return jsonify({'status': 'error', 'message': '主旨與內容皆為必填'}), 400
+
+    # 模擬儲存或處理資料
+    print(f'收到留言 - 主旨: {title}, 內容: {content}')
+    
+    # 返回回應
+    return redirect('/contact')
+
+
+# 路由：處理表單提交
+@app.route('/submit-contact-message', methods=['POST'])
+def submit_contact_message():
+    # 從表單中提取資料
+    title = request.json.get('title')
+    content = request.json.get('content')
+    
+    # 確保資料完整
+    if not title or not content:
+        return jsonify({'status': 'error', 'message': '主旨與內容皆為必填'}), 400
+
+    # 模擬儲存或處理資料
+    print(f'收到留言 - 主旨: {title}, 內容: {content}')
+    
+    # 返回回應
+    return '感謝您的留言！',200
+
 
 # 關於頁面路由
 @app.route('/about')
